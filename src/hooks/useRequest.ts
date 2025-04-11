@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { AwxResponse, AwxRequest } from "../types";
+import { MIN_RUB, MIN_USDT } from "../constants";
 
 interface UseRequestOptions {
   request?: AwxRequest;
@@ -25,13 +26,17 @@ export const useRequest = (options: UseRequestOptions = {}) => {
       //       body: JSON.stringify(request),
       //     }
       //   ).then((res) => res.json());
-      setData({
-        inAmount: (request?.inAmount ?? 0) + 10,
-        outAmount: (request?.outAmount ?? 0) + 10,
+      const data = {
+        inAmount: (request?.inAmount ?? MIN_RUB) + 10,
+        outAmount: (request?.outAmount ?? MIN_USDT) + 10,
         isStraight: true,
         price: [10, 10],
-      });
+      };
+      setData(data);
+
+      return { data };
     } catch (error) {
+      console.warn(error);
       setError(`Ошибка: ${error}`);
     } finally {
       setIsLoading(false);

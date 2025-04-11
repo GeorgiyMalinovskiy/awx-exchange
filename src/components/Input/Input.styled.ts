@@ -59,11 +59,13 @@ export const InputProgressButton = styled("button")<{
   text-align: center;
   width: 100%;
   height: 24px;
-  line-height: 24px;
   overflow: hidden;
   cursor: pointer;
   border-radius: var(--border-radius);
   border: 1px solid var(--border-color);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 24px;
   @media (min-width: 320px) {
     width: calc(100% / ${({ "data-total": dataTotal }) => dataTotal});
   }

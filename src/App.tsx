@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useForm, FormProvider } from "react-hook-form";
+import { DevTool } from "@hookform/devtools";
 
 import { Form, Input } from "./components";
 import * as s from "./App.styled";
@@ -24,7 +25,7 @@ function App() {
     },
   });
 
-  const { handleSubmit } = methods;
+  const { handleSubmit, control } = methods;
 
   const onSubmit = useCallback((formData: FormValues) => {
     console.log("submit", formData);
@@ -37,6 +38,7 @@ function App() {
           <Input name="rub" min={10e3} max={70e6} step={100.0} />
           <Input name="usdt" step={0.000001} />
         </Form>
+        {import.meta.env.DEV && <DevTool control={control} />}
       </FormProvider>
     </s.Container>
   );
