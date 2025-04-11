@@ -53,7 +53,8 @@ export const InputProgress = styled.div`
 
 export const InputProgressButton = styled("button")<{
   "data-index": number;
-  "data-total": number;
+  "data-steps": number;
+  "data-progress": number;
 }>`
   position: relative;
   text-align: center;
@@ -67,6 +68,59 @@ export const InputProgressButton = styled("button")<{
   font-weight: 600;
   line-height: 24px;
   @media (min-width: 320px) {
-    width: calc(100% / ${({ "data-total": dataTotal }) => dataTotal});
+    width: calc(100% / ${({ "data-steps": dataSteps }) => dataSteps});
   }
+  &:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    color: var(--text-color);
+    z-index: 1;
+  }
+  &:after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--primary-color);
+    z-index: 2;
+  }
+  & > span {
+    position: absolute;
+    inset: 0;
+    color: var(--text-inverse-color);
+    z-index: 3;
+    clip-path: inset(0 var(--uncovered-part) 0 0);
+  }
+  ${({
+    "data-progress": dataProgress,
+    "data-steps": dataSteps,
+    "data-index": dataIndex,
+  }) => {
+    const progress = Math.max(
+      0,
+      (dataProgress - dataIndex * (100 / dataSteps)) * dataSteps
+    );
+
+    return `
+        &:after {
+          width: ${progress}%;
+        }
+      `;
+  }}}
+  ${({
+    "data-progress": dataProgress,
+    "data-index": dataIndex,
+    "data-steps": dataSteps,
+  }) => {
+    const progress = Math.max(
+      0,
+      (dataProgress - dataIndex * (100 / dataSteps)) * dataSteps
+    );
+
+    return `
+        & > span {
+          --uncovered-part: calc(100% - ${progress});
+        }
+      `;
+  }}}
 `;

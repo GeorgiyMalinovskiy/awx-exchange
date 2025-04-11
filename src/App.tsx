@@ -6,6 +6,7 @@ import { Form, Input } from "./components";
 import * as s from "./App.styled";
 import { useRequest } from "./hooks";
 import type { FormValues } from "./types";
+import { MIN_RUB, MIN_USDT } from "./constants";
 
 function App() {
   const { handleRequest } = useRequest();
@@ -14,8 +15,8 @@ function App() {
     defaultValues: async () => {
       const { data } = await handleRequest({
         pairId: 133,
-        inAmount: 100,
-        outAmount: null,
+        inAmount: MIN_RUB,
+        outAmount: MIN_USDT,
       });
 
       return {
@@ -36,7 +37,7 @@ function App() {
       <FormProvider {...methods}>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Input name="rub" min={10e3} max={70e6} step={100.0} />
-          <Input name="usdt" step={0.000001} />
+          <Input name="usdt" min={0.000001} max={10e6} step={0.000001} />
         </Form>
         {import.meta.env.DEV && <DevTool control={control} />}
       </FormProvider>
