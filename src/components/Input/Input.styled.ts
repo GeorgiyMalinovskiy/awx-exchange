@@ -2,8 +2,13 @@ import styled from "styled-components";
 
 export const InputRoot = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: var(--spacing);
+  max-width: 100%;
+  @media (min-width: 425px) {
+    max-width: 381px;
+  }
 `;
 
 export const InputInner = styled.div`
@@ -20,7 +25,11 @@ export const InputInner = styled.div`
 export const InputInput = styled.input`
   position: absolute;
   inset: 0;
-  opacity: 0;
+  opacity: 0.1;
+  &:focus {
+    outline: none;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
 `;
 
 export const InputText = styled.span`
@@ -42,13 +51,10 @@ export const InputValue = styled.span`
 
 export const InputProgress = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   gap: var(--spacing);
-  @media (min-width: 320px) {
-    flex-direction: row;
-  }
 `;
 
 export const InputProgressButton = styled("button")<{
