@@ -51,6 +51,7 @@ export const Input: FC<InputProps> = ({ name, steps = 4, ...props }) => {
               data-index={index}
               data-steps={steps}
               data-progress={progress}
+              data-text={`${stepProgress}%`}
               onClick={handleClick}
             >
               <span>{stepProgress}%</span>

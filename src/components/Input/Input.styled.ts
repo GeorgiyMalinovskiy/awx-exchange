@@ -71,7 +71,7 @@ export const InputProgressButton = styled("button")<{
     width: calc(100% / ${({ "data-steps": dataSteps }) => dataSteps});
   }
   &:before {
-    content: "";
+    content: attr(data-text);
     position: absolute;
     inset: 0;
     color: var(--text-color);
@@ -89,7 +89,17 @@ export const InputProgressButton = styled("button")<{
     inset: 0;
     color: var(--text-inverse-color);
     z-index: 3;
-    clip-path: inset(0 var(--uncovered-part) 0 0);
+    clip-path: inset(0 ${({
+      "data-progress": dataProgress,
+      "data-index": dataIndex,
+      "data-steps": dataSteps,
+    }) => {
+      const progress = Math.max(
+        0,
+        (dataProgress - dataIndex * (100 / dataSteps)) * dataSteps
+      );
+      return progress ? `calc(100% - ${progress}%)` : `100%`;
+    }} 0 0);
   }
   ${({
     "data-progress": dataProgress,
@@ -104,22 +114,6 @@ export const InputProgressButton = styled("button")<{
     return `
         &:after {
           width: ${progress}%;
-        }
-      `;
-  }}}
-  ${({
-    "data-progress": dataProgress,
-    "data-index": dataIndex,
-    "data-steps": dataSteps,
-  }) => {
-    const progress = Math.max(
-      0,
-      (dataProgress - dataIndex * (100 / dataSteps)) * dataSteps
-    );
-
-    return `
-        & > span {
-          --uncovered-part: calc(100% - ${progress});
         }
       `;
   }}}
