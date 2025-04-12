@@ -1,9 +1,13 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
 import type { AwxRequest, AwxResponse } from "../types";
+import { FIXED_PRECISION } from "./constants";
+
+dotenv.config();
 
 const app = express();
-const PORT = 3001;
+const PORT = Number(process.env.VITE_API_PORT) || 3001;
 
 app.use(express.json());
 app.use(cors());
@@ -22,7 +26,9 @@ app.post("/mock/api/change/user/pair/calc", (req, res) => {
     // RUB -> USDT
     response = {
       inAmount,
-      outAmount: Number((inAmount * MOCK_RATES.RUB_TO_USDT).toFixed(6)),
+      outAmount: Number(
+        (inAmount * MOCK_RATES.RUB_TO_USDT).toFixed(FIXED_PRECISION)
+      ),
       isStraight: true,
       price: [MOCK_RATES.USDT_TO_RUB, MOCK_RATES.RUB_TO_USDT],
     };

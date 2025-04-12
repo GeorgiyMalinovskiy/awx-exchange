@@ -22,6 +22,7 @@ export const InputInner = styled.div`
   }
 `;
 
+// TODO: можно вместо value все же показать и сам инеут, если решить проблему с отступами
 export const InputInput = styled.input`
   position: absolute;
   top: 0;
@@ -41,6 +42,7 @@ export const InputText = styled.span`
   font-weight: 600;
 `;
 
+// TODO: используя useRef можно опираясь на ширину текста подгонять ширину инпута или сделать кастомный курсор
 export const InputValue = styled.span`
   vertical-align: middle;
   font-size: 42px;

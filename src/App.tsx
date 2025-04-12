@@ -5,7 +5,7 @@ import { DevTool } from "@hookform/devtools";
 import { Form, Input } from "./components";
 import * as s from "./App.styled";
 import { useRequest } from "./hooks";
-import type { FormValues, AwxResponse } from "../types";
+import type { FormValues, AwxResponse, AwxRequest } from "../types";
 import {
   RUB_MIN,
   RUB_MAX,
@@ -13,6 +13,7 @@ import {
   USDT_MIN,
   USDT_MAX,
   USDT_STEP,
+  FIXED_PRECISION,
 } from "./constants";
 
 function App() {
@@ -26,8 +27,8 @@ function App() {
     onSuccess: (data: AwxResponse) => {
       const [, rubToUsdt] = data.price;
       setUsdtLimits({
-        min: Number((RUB_MIN * rubToUsdt).toFixed(6)),
-        max: Number((RUB_MAX * rubToUsdt).toFixed(6)),
+        min: Number((RUB_MIN * rubToUsdt).toFixed(FIXED_PRECISION)),
+        max: Number((RUB_MAX * rubToUsdt).toFixed(FIXED_PRECISION)),
       });
     },
     onError: (error: string) => {
@@ -69,10 +70,10 @@ function App() {
         const isUsdtDirty = dirtyFields.usdt;
 
         if (isRubDirty || isUsdtDirty) {
-          const request = {
+          const request: AwxRequest = {
             pairId: 133,
-            inAmount: isRubDirty && rub ? rub : null,
-            outAmount: isUsdtDirty && usdt ? usdt : null,
+            inAmount: isRubDirty && rub ? Number(rub) : null,
+            outAmount: isUsdtDirty && usdt ? Number(usdt) : null,
           };
 
           const { data } = await handleRequest(request);

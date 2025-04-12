@@ -45,6 +45,7 @@ export const Input: FC<InputProps> = ({ name, steps = 4, ...props }) => {
     <s.InputRoot>
       <s.InputInner>
         <s.InputInput
+          data-testid={`${name}-input`}
           type="number"
           {...register(name, {
             valueAsNumber: true,
