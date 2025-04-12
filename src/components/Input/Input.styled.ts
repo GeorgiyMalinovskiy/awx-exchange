@@ -25,6 +25,7 @@ export const InputInner = styled.div`
 export const InputInput = styled.input`
   position: absolute;
   top: 0;
+  right: 0;
   bottom: 0;
   left: 0;
   font-size: 42px;

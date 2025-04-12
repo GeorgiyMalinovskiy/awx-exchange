@@ -17,11 +17,10 @@ export const Input: FC<InputProps> = ({ name, steps = 4, ...props }) => {
   const { register, control, setValue } = useFormContext<FormValues>();
   const value = useWatch({ name, control }) ?? 1;
 
-  const { max = 1 } = props;
-  const progress = Math.min(
-    Math.ceil(Number(value) / (Number(max) / 100)),
-    100
-  );
+  const { max = 1, min = 0 } = props;
+  const progress = value
+    ? Math.min(Math.ceil(Number(value) / (Number(max) / 100)), 100)
+    : 0;
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = (event) => {
     const index = +event.currentTarget.dataset.index!;
@@ -33,6 +32,15 @@ export const Input: FC<InputProps> = ({ name, steps = 4, ...props }) => {
     });
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = Number(e.target.value);
+    if (newValue > Number(max)) {
+      setValue(name, Number(max));
+    } else if (newValue < Number(min)) {
+      setValue(name, Number(min));
+    }
+  };
+
   return (
     <s.InputRoot>
       <s.InputInner>
@@ -40,7 +48,11 @@ export const Input: FC<InputProps> = ({ name, steps = 4, ...props }) => {
           type="number"
           {...register(name, {
             valueAsNumber: true,
+            onChange: handleChange,
           })}
+          // onKeyDown={(e) => {
+          //   if (/D+/g.test(e.key)) e.preventDefault();
+          // }}
           {...props}
         />
         <s.InputValue>{value ? value : 0}</s.InputValue>

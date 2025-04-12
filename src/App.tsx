@@ -1,32 +1,52 @@
-import { useCallback, useRef, useEffect } from "react";
+import { useCallback, useRef, useEffect, useState } from "react";
 import { useForm, FormProvider, useWatch } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 
 import { Form, Input } from "./components";
 import * as s from "./App.styled";
 import { useRequest } from "./hooks";
-import type { FormValues } from "../types";
-import { MIN_RUB, MIN_USDT } from "./constants";
+import type { FormValues, AwxResponse } from "../types";
+import {
+  RUB_MIN,
+  RUB_MAX,
+  RUB_STEP,
+  USDT_MIN,
+  USDT_MAX,
+  USDT_STEP,
+} from "./constants";
 
 function App() {
   const formRef = useRef<HTMLFormElement>(null);
+  const [usdtLimits, setUsdtLimits] = useState({
+    min: USDT_MIN,
+    max: USDT_MAX,
+  });
+
   const { handleRequest, isLoading } = useRequest({
+    onSuccess: (data: AwxResponse) => {
+      const [, rubToUsdt] = data.price;
+      setUsdtLimits({
+        min: Number((RUB_MIN * rubToUsdt).toFixed(6)),
+        max: Number((RUB_MAX * rubToUsdt).toFixed(6)),
+      });
+    },
     onError: (error: string) => {
       alert(error);
     },
   });
 
   const methods = useForm<FormValues>({
+    shouldUseNativeValidation: false,
     defaultValues: async () => {
       const { data } = await handleRequest({
         pairId: 133,
-        inAmount: MIN_RUB,
+        inAmount: RUB_MIN,
         outAmount: null,
       });
 
       return {
-        rub: data?.inAmount ?? MIN_RUB,
-        usdt: data?.outAmount ?? MIN_USDT,
+        rub: data?.inAmount ?? RUB_MIN,
+        usdt: data?.outAmount ?? USDT_MIN,
       };
     },
   });
@@ -82,16 +102,16 @@ function App() {
         <Form onSubmit={handleSubmit(onSubmit)} ref={formRef}>
           <Input
             name="rub"
-            min={10e3}
-            max={70e6}
-            step={100.0}
+            min={RUB_MIN}
+            max={RUB_MAX}
+            step={RUB_STEP}
             disabled={isLoading}
           />
           <Input
             name="usdt"
-            min={0.000001}
-            max={10e6}
-            step={0.000001}
+            min={usdtLimits.min}
+            max={usdtLimits.max}
+            step={USDT_STEP}
             disabled={isLoading}
           />
         </Form>
