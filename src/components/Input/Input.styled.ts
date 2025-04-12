@@ -24,12 +24,13 @@ export const InputInner = styled.div`
 
 export const InputInput = styled.input`
   position: absolute;
-  inset: 0;
-  opacity: 0.1;
-  &:focus {
-    outline: none;
-    background-color: rgba(0, 0, 0, 0.05);
-  }
+  top: 0;
+  bottom: 0;
+  left: 0;
+  font-size: 42px;
+  font-weight: 600;
+  opacity: 0;
+  z-index: 1;
 `;
 
 export const InputText = styled.span`
@@ -47,6 +48,7 @@ export const InputValue = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  z-index: -1;
 `;
 
 export const InputProgress = styled.div`

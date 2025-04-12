@@ -4,13 +4,13 @@
     "module": "commonjs",
     "lib": ["ES2020"],
     "outDir": "./dist",
-    "rootDir": ".",
+    "rootDir": "..",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node"
   },
-  "include": ["./**/*"],
+  "include": ["./**/*", "../types.ts"],
   "exclude": ["node_modules", "dist"]
 }

@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import type { AwxRequest, AwxResponse } from "../src/types";
+import type { AwxRequest, AwxResponse } from "../types";
 
 const app = express();
 const PORT = 3001;

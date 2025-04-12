@@ -1,21 +1,19 @@
-import { useCallback, useRef } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import { useCallback, useRef, useEffect } from "react";
+import { useForm, FormProvider, useWatch } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 
 import { Form, Input } from "./components";
 import * as s from "./App.styled";
 import { useRequest } from "./hooks";
-import type { FormValues } from "./types";
+import type { FormValues } from "../types";
 import { MIN_RUB, MIN_USDT } from "./constants";
 
 function App() {
-  const { handleRequest, isLoading } = useRequest();
-
-  const prevValues = useRef<{
-    [key in keyof FormValues]: FormValues[key] | null;
-  }>({
-    rub: null,
-    usdt: null,
+  const formRef = useRef<HTMLFormElement>(null);
+  const { handleRequest, isLoading } = useRequest({
+    onError: (error: string) => {
+      alert(error);
+    },
   });
 
   const methods = useForm<FormValues>({
@@ -26,11 +24,6 @@ function App() {
         outAmount: null,
       });
 
-      prevValues.current = {
-        rub: data?.inAmount ?? MIN_RUB,
-        usdt: data?.outAmount ?? MIN_USDT,
-      };
-
       return {
         rub: data?.inAmount ?? MIN_RUB,
         usdt: data?.outAmount ?? MIN_USDT,
@@ -38,43 +31,55 @@ function App() {
     },
   });
 
-  const { handleSubmit, control, setValue } = methods;
+  const { handleSubmit, control, formState, reset } = methods;
+  const { dirtyFields } = formState;
+
+  const values = useWatch({ control });
+  useEffect(() => {
+    if (formRef.current && Object.keys(dirtyFields).length) {
+      formRef.current.requestSubmit();
+    }
+  }, [values, dirtyFields]);
 
   const onSubmit = useCallback(
     (formData: FormValues) => {
       const requestData = async () => {
         const { rub, usdt } = formData;
-        if (
-          (rub || usdt) &&
-          (prevValues?.current?.rub || prevValues?.current?.usdt)
-        ) {
-          const { data } = await handleRequest({
-            pairId: 133,
-            inAmount: rub && prevValues.current.rub !== rub ? rub : null,
-            outAmount: usdt && prevValues.current.usdt !== usdt ? usdt : null,
-          });
+        const isRubDirty = dirtyFields.rub;
+        const isUsdtDirty = dirtyFields.usdt;
 
-          prevValues.current = {
-            rub: data?.inAmount ?? MIN_RUB,
-            usdt: data?.outAmount ?? MIN_USDT,
+        if (isRubDirty || isUsdtDirty) {
+          const request = {
+            pairId: 133,
+            inAmount: isRubDirty && rub ? rub : null,
+            outAmount: isUsdtDirty && usdt ? usdt : null,
           };
 
+          const { data } = await handleRequest(request);
+
           if (data) {
-            setValue("rub", data.inAmount, { shouldValidate: true });
-            setValue("usdt", data.outAmount, { shouldValidate: true });
+            reset(
+              {
+                rub: data.inAmount,
+                usdt: data.outAmount,
+              },
+              {
+                keepDirty: false,
+              }
+            );
           }
         }
       };
 
       requestData();
     },
-    [handleRequest, setValue]
+    [handleRequest, reset, dirtyFields]
   );
 
   return (
     <s.Container>
       <FormProvider {...methods}>
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form onSubmit={handleSubmit(onSubmit)} ref={formRef}>
           <Input
             name="rub"
             min={10e3}

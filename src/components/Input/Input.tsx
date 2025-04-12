@@ -6,7 +6,7 @@ import {
 import { useFormContext, useWatch } from "react-hook-form";
 
 import * as s from "./Input.styled";
-import type { FormValues } from "../../types";
+import type { FormValues } from "../../../types";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: keyof FormValues;
@@ -17,7 +17,7 @@ export const Input: FC<InputProps> = ({ name, steps = 4, ...props }) => {
   const { register, control, setValue } = useFormContext<FormValues>();
   const value = useWatch({ name, control }) ?? 1;
 
-  const { max = 1, min = 0 } = props;
+  const { max = 1 } = props;
   const progress = Math.min(
     Math.ceil(Number(value) / (Number(max) / 100)),
     100
@@ -27,7 +27,10 @@ export const Input: FC<InputProps> = ({ name, steps = 4, ...props }) => {
     const index = +event.currentTarget.dataset.index!;
     const percent = (100 / steps) * (index + 1);
     const value = Number(max) * (percent / 100);
-    setValue(name, value);
+    setValue(name, value, {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
   };
 
   return (
@@ -35,7 +38,9 @@ export const Input: FC<InputProps> = ({ name, steps = 4, ...props }) => {
       <s.InputInner>
         <s.InputInput
           type="number"
-          {...register(name, { valueAsNumber: true })}
+          {...register(name, {
+            valueAsNumber: true,
+          })}
           {...props}
         />
         <s.InputValue>{value ? value : 0}</s.InputValue>
@@ -48,6 +53,7 @@ export const Input: FC<InputProps> = ({ name, steps = 4, ...props }) => {
           return (
             <s.InputProgressButton
               key={index}
+              type="button"
               data-index={index}
               data-steps={steps}
               data-progress={progress}
