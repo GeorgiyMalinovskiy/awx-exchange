@@ -5,8 +5,8 @@ export const Form = styled.form`
   flex-direction: column;
   gap: calc(var(--spacing) * 6);
   align-self: center;
-  @media (min-width: 320px) {
+  @media (min-width: 425px) {
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-around;
   }
 `;
